@@ -42,11 +42,11 @@ $ brew install ruby
 
 Windows
 
-En windows la manera más sencilla de instalar el runtime es mediante (Ruby Installer)[http://rubyinstaller.org/]
+En windows la manera más sencilla de instalar el runtime es mediante [Ruby Installer](http://rubyinstaller.org/)
 
 ## Instalación del IDE
 
-En caso de que opten por usar el Rubymine, pueden instalar el entorno en este (lugar)[https://www.jetbrains.com/ruby/]. Seguir las instrucciones que se dan en la página.
+En caso de que opten por usar el Rubymine, pueden instalar el entorno en este [lugar](https://www.jetbrains.com/ruby/). Seguir las instrucciones que se dan en la página.
 
 ## Instalacion de las dependencias
 
