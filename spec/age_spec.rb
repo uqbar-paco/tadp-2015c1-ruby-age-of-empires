@@ -19,7 +19,7 @@ describe 'age of empires tests' do
     expect(atila.energia).to eq(40)
   end
 
-  it 'atila ataca a vikingo pero no le hace daño' do
+  it 'atila ataca a vikingo pero no le hace danio' do
     atila= Guerrero.new
     vikingo = Guerrero.new 70
 
@@ -52,7 +52,7 @@ describe 'age of empires tests' do
     expect { muralla.atacar don_quijote}.to raise_error(NoMethodError)
   end
 
-  it 'Cañon no defiende' do
+  it 'Canion no defiende' do
     canion = Canion.new
     don_quijote = Espadachin.new(Espada.new(40))
     expect { don_quijote.atacar canion}.to raise_error(NoMethodError)
