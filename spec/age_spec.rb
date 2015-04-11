@@ -4,7 +4,7 @@ require_relative '../src/age'
 describe 'age of empires tests' do
   #Los guerreros tienen estos parámetros por default: potencial_ofensivo=20, energia=100, potencial_defensivo=10
   it 'vikingo ataca a atila' do
-    atila= Guerrero.new
+    atila = Guerrero.new
     vikingo = Guerrero.new 70
 
     vikingo.atacar atila
@@ -12,7 +12,7 @@ describe 'age of empires tests' do
   end
 
   it 'espadachin ataca a atila' do
-    atila= Guerrero.new
+    atila = Guerrero.new
     don_quijote = Espadachin.new(Espada.new(50))
 
     don_quijote.atacar atila
@@ -20,7 +20,7 @@ describe 'age of empires tests' do
   end
 
   it 'atila ataca a vikingo pero no le hace danio' do
-    atila= Guerrero.new
+    atila = Guerrero.new
     vikingo = Guerrero.new 70
 
     atila.atacar vikingo
@@ -41,7 +41,8 @@ describe 'age of empires tests' do
     muralla = Muralla.new
     canion = Canion.new
 
-    expect(canion.atacar muralla).to eq(50)
+    canion.atacar muralla
+    expect(muralla.energia).to eq(50)
   end
 
   it 'Muralla no ataca' do
@@ -49,12 +50,140 @@ describe 'age of empires tests' do
     don_quijote = Espadachin.new(Espada.new(40))
     #Esto es la manera sintáctica de decir que lo que se espera dentro de los {} del expect, lanza una exception.
     #Despues veremos que quieren decir los {}
-    expect { muralla.atacar don_quijote}.to raise_error(NoMethodError)
+    expect { muralla.atacar don_quijote }.to raise_error(NoMethodError)
   end
 
   it 'Canion no defiende' do
     canion = Canion.new
     don_quijote = Espadachin.new(Espada.new(40))
-    expect { don_quijote.atacar canion}.to raise_error(NoMethodError)
+    expect { don_quijote.atacar canion }.to raise_error(NoMethodError)
   end
+
+  #########################
+
+  it 'atacante descansado pega doble' do
+    atila = Guerrero.new #(potencial_ofensivo = 20, energia = 100, potencial_defensivo = 10)
+    conan = Guerrero.new
+
+    atila.descansar
+    atila.atacar conan
+
+    # 100 - (20 * 2 - 10)
+    expect(conan.energia).to eq(70)
+  end
+
+  it 'atacante descansado ataca doble solo una vez por descanso' do
+    atila = Guerrero.new
+    conan = Guerrero.new
+    heman = Guerrero.new
+
+    atila.descansar
+    atila.atacar conan
+    atila.atacar heman
+
+    # 100 - (20 - 10)
+    expect(heman.energia).to eq(90)
+  end
+
+  it 'defensor descansado suma 10' do
+    muralla = Muralla.new
+    expect(muralla.energia).to eq(200)
+
+    muralla.descansar
+
+    expect(muralla.energia).to eq(210)
+  end
+
+  it 'guerrero descansa como defensor y como atacante' do
+    atila = Guerrero.new
+    conan = Guerrero.new
+
+    expect(atila.energia).to eq(100)
+    atila.descansar
+    atila.atacar conan
+
+    expect(conan.energia).to eq(70)
+    expect(atila.energia).to eq(110)
+  end
+
+  ###################
+
+  it 'kamikaze pierde su energia luego de atacar' do
+    kamikaze = Kamikaze.new
+    muralla = Muralla.new
+
+    kamikaze.atacar(muralla)
+
+    expect(muralla.energia).to eq(0)
+    expect(kamikaze.energia).to eq(0)
+  end
+
+  it 'kamikaze descansa solo como atacante' do
+    kamikaze = Kamikaze.new
+    atila = Guerrero.new
+
+    expect(kamikaze.potencial_ofensivo).to eq(250)
+
+    kamikaze.descansar
+    expect(kamikaze.energia).to eq(100)
+    expect(kamikaze.potencial_ofensivo).to eq(500)
+
+    kamikaze.atacar(atila)
+    expect(kamikaze.energia).to eq(0)
+  end
+
+  it 'ejercito cobarde se retira' do
+    atila = Guerrero.new
+
+    konan = Guerrero.new
+    ejercito = Ejercito.cobarde # crea un ejercito cobarde
+    ejercito.add(konan)
+
+    expect(ejercito.retirado).to be(false)
+    atila.atacar(konan)
+    expect(ejercito.retirado).to be(true)
+  end
+
+  it 'ejercito descansador descansa a la unidad' do
+    atila = Guerrero.new
+
+    konan = Guerrero.new
+    ejercito = Ejercito.descansador
+    ejercito.add(konan)
+
+    expect(konan.energia).to eq(100)
+    atila.atacar(konan)
+    expect(konan.energia).to eq(100)
+    expect(ejercito.retirado).to be(false)
+  end
+
+  it 'mago puede curar guerrero' do
+    atila = Guerrero.new
+
+    konan = Guerrero.new
+    mago = Mago.new
+    konan.agregar_interesado(proc { |unidad|
+                               mago.curar(unidad)
+                             })
+
+    expect(konan.energia).to eq(100)
+    atila.atacar(konan)
+    expect(konan.energia).to eq(110)
+  end
+
+  it 'mago puede teletransportar' do
+    atila = Guerrero.new
+
+    konan = Guerrero.new
+    mago = Mago.new
+    konan.agregar_interesado(
+        proc { |unidad|
+          mago.teletransportar(unidad)
+        })
+
+    atila.atacar(konan)
+    expect(mago.teletransportados.include?(konan)).to be(true)
+    expect(mago.teletransportados).to include(konan)
+  end
+
 end
