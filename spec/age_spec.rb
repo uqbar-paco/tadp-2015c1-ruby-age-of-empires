@@ -186,4 +186,36 @@ describe 'age of empires tests' do
     expect(mago.teletransportados).to include(konan)
   end
 
+  #Metaprogramacion
+
+  it 'cuando atila es atacado el mago lo teletransporta' do
+    mago = Mago.new
+    atila = Guerrero.new
+    atila.agregar( lambda {|unidad |
+                     mago.teletransportar(unidad)
+                   })
+    conan = Guerrero.new
+
+    conan.atacar(atila)
+
+    expect(mago.teletransportando.include?(atila)).to be_truthy
+  end
+
+  it 'cuando atila es atacado pasan cosas locas' do
+    atila = Guerrero.new
+
+    atila.singleton_class.send(:define_method,
+                               :comerse_un_pollo, proc {
+          self.energia += 20
+        })
+
+    atila.agregar_interesado(proc {|unidad|
+                    unidad.descansar
+                    unidad.comerse_un_pollo})
+    conan = Guerrero.new
+
+    conan.atacar(atila)
+    expect(atila.energia).to eq(100 - 20 + 10 + 20)
+  end
+
 end
