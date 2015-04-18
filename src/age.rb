@@ -146,7 +146,6 @@ class Ejercito
   end
 
   def initialize accion_a_tomar
-    @unidades = []
     @retirado = false
     @accion_a_tomar = accion_a_tomar
   end

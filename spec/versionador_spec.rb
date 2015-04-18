@@ -3,6 +3,16 @@ require_relative '../src/age'
 
 describe 'Versionador' do
 
+  class Object
+    def version
+      @version = @version || 0
+    end
+
+    def versionar
+      @version = self.version + 1
+    end
+  end
+
   it 'deberia tener una version' do
     atila = Guerrero.new
 
@@ -22,4 +32,5 @@ describe 'Versionador' do
     a_string.versionar
     expect(a_string.version).to be(1)
   end
+
 end

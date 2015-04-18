@@ -1,20 +1,42 @@
 require 'rspec'
 
 describe 'Array' do
-  it 'should accept non-nils' do
-    a =[1]
-    a.push(2)
-    expect(a).to eq([1,2])
+
+  class NilError < StandardError
   end
 
-  it 'should reject nils' do
-    a = [1]
-    expect {a.push(nil)}.to raise_error Exception
+  module ValidaPush
+    def push *args
+      args.each { |value|
+        if value == nil
+          raise NilError.new
+        end
+      }
+      super *args
+    end
   end
 
-  it 'should reject nils in varargs' do
-    a = [1]
-    expect {a.push(2,4,nil)}.to raise_error Exception
+  before(:each) {
+    @array = [1]
+    @array.extend ValidaPush
+  }
+
+  it 'acepta valores distintos de nil' do
+    @array.push(2)
+
+    expect(@array).to eq([1, 2])
+  end
+
+  it 'rechaza nil' do
+    expect { @array.push(nil) }.to raise_error NilError
+  end
+
+  it 'rechaza nil si lo encuentra en uno de sus argumentos' do
+    expect { @array.push(2, 4, nil) }.to raise_error NilError
+  end
+
+  it 'no agrega comportamiento a otros arrays' do
+    expect([].push(nil)).to eq([nil])
   end
 
 end
