@@ -204,9 +204,11 @@ describe 'age of empires tests' do
     atila = Guerrero.new
 
     atila
-        .singleton_class.send(:define_method, :comerse_un_pollo, proc {
-                                              self.energia += 20
-                                            })
+        .singleton_class
+        .send(
+            :define_method, :comerse_un_pollo, proc {
+                            self.energia += 20
+                          })
 
     atila.agregar_interesado(proc { |unidad|
                                unidad.descansar # +10
